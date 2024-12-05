@@ -1,7 +1,6 @@
 import Nav from "../../components/Header/Nav.tsx";
 import SearchIcon from '@mui/icons-material/Search';
 import CancelIcon from '@mui/icons-material/Cancel';
-import {Link} from 'react-router-dom';
 
 const QuizesPage = () => {
     const users = [
@@ -82,6 +81,7 @@ const QuizesPage = () => {
 
                 <div className="overflow-x-auto">
                     <table className="table-auto w-full text-left border-collapse">
+
                         <thead>
                         <tr className="border border-gray-300">
                             <th className="p-4  text-gray-400">User</th>
@@ -91,25 +91,24 @@ const QuizesPage = () => {
                             <th className="p-4 text-gray-400">Questions</th>
                         </tr>
                         </thead>
-                        <tbody>
-
-                        {users.map((user, index) => (
 
 
+
+                            <tbody>
+
+                            {users.map((user, index) => (
 
 
                                 <tr key={index} className=" hover:bg-innerFormColor">
-                                    <Link to={`/details/${user.id}`} key={user.id}>
                                     <td className="p-4">{user.user}</td>
                                     <td className="p-4">{user.title}</td>
                                     <td className="p-4  ">{user.average}</td>
                                     <td className={`p-4 font-bold ${getDifficultyColor(user.difficulty)}`}>{user.difficulty}</td>
                                     <td className="p-4">{user.questions}</td>
-                                        </Link>
                                 </tr>
 
-                        ))}
-                        </tbody>
+                            ))}
+                            </tbody>
                     </table>
                 </div>
 
