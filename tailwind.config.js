@@ -13,11 +13,15 @@ export default {
                 innerFormColor: "#505050" ,
                 innerFormTextColor: "#91898C",
                 primaryTextColor: "#5348F2",
+                verifyButton:"#2CBB5D"
 
             },
             fontFamily: {
                 custom: ['"Poppins"', 'sans-serif'],
 
+            },
+            margin:{
+                'custom-40':'40px'
             }
 
         },

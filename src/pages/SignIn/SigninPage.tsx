@@ -1,3 +1,4 @@
+import {Link} from "react-router-dom";
 
 const SigninPage = () => {
     return (
@@ -25,12 +26,15 @@ const SigninPage = () => {
                             className="w-full px-4 py-2 bg-innerFormColor text-gray-300 placeholder-innerFormTextColor rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-primaryTextColor text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
-                    >
-                        LOGIN
-                    </button>
+                    <Link to="/quizes">
+
+                        <button
+                            type="submit"
+                            className="w-full bg-primaryTextColor text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
+                        >
+                            LOGIN
+                        </button>
+                    </Link>
                 </form>
             </div>
         </div>
