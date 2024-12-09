@@ -10,18 +10,18 @@ export default {
                 bgColor: "#1a1a1a",
                 bgNavColor: "#282828",
                 formColor: "#282828",
-                innerFormColor: "#505050" ,
+                innerFormColor: "#505050",
                 innerFormTextColor: "#91898C",
                 primaryTextColor: "#5348F2",
-                verifyButton:"#2CBB5D"
+                verifyButton: "#2CBB5D"
 
             },
             fontFamily: {
-                custom: ['"Poppins"', 'sans-serif'],
-
+                'NotoSans': ['"Noto Sans"'],
+                'Compacta': ['"Compacta"'],
             },
-            margin:{
-                'custom-40':'40px'
+            margin: {
+                'custom-40': '40px'
             }
 
         },

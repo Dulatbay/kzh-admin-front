@@ -1,13 +1,11 @@
 import {Link} from "react-router-dom";
+import Logo from "../../components/Logo.tsx";
 
 const SigninPage = () => {
     return (
         <div className="flex items-center justify-center min-h-screen bg-bgColor px-4">
-            <div className="bg-formColor p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-sm sm:max-w-md">
-                <div className="text-center mb-6">
-                    <h1 className="text-primaryTextColor text-2xl font-bold">KzH</h1>
-                    <p className="text-gray-400 text-sm">admin</p>
-                </div>
+            <div className="bg-formColor p-6  rounded-lg shadow-lg w-full max-w-[350px] pt-12 pb-16">
+                <Logo/>
                 <h2 className="text-white text-2xl sm:text-3xl font-bold text-center mb-6">
                     SIGN IN
                 </h2>

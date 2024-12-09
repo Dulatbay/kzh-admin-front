@@ -1,4 +1,5 @@
 import React from "react";
+import Logo from "./Logo.tsx";
 
 const Nav: React.FC = () => {
     return (
@@ -6,10 +7,7 @@ const Nav: React.FC = () => {
 
             <div className="flex flex-row justify-center items-center space-x-6">
 
-                <div className="flex flex-col justify-center items-center space-x-1">
-                    <span className="text-xl font-bold  text-primaryTextColor">KzH</span>
-                    <span className="text-sm text-gray-400">admin</span>
-                </div>
+               <Logo />
 
                 <div className="hidden md:flex space-x-8">
                     <span className="text-gray-100">

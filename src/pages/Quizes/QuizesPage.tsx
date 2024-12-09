@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Nav from "../../components/Header/Nav.tsx";
+import Nav from "../../components/Nav.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 import CancelIcon from "@mui/icons-material/Cancel";
 

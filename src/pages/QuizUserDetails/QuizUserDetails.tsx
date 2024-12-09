@@ -1,4 +1,4 @@
-import Nav from "../../components/Header/Nav.tsx";
+import Nav from "../../components/Nav.tsx";
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import {
     Button,
