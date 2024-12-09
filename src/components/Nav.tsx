@@ -5,9 +5,9 @@ const Nav: React.FC = () => {
     return (
         <nav className="bg-bgNavColor text-white p-4 flex items-center justify-evenly shadow-md">
 
-            <div className="flex flex-row justify-center items-center space-x-6">
+            <div className="flex flex-row justify-center items-center space-x-6 gap-4">
 
-               <Logo />
+               <Logo logoSize={'small'}/>
 
                 <div className="hidden md:flex space-x-8">
                     <span className="text-gray-100">
