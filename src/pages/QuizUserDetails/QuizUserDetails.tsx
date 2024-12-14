@@ -42,7 +42,7 @@ const QuizUserDetails = () => {
                     <Link to="/quizes">
 
                     <Button variant="outlined" style={{color: "grey", border: "0.1px solid grey"}}
-                            startIcon={<KeyboardReturnIcon/>} scolor="error">Back</Button>
+                            startIcon={<KeyboardReturnIcon/>} color="error">Back</Button>
                     </Link>
                     <Button variant="contained" color="success">VERIFY ALL</Button>
                     <Button variant="outlined" color="error">REMOVE ALL</Button>

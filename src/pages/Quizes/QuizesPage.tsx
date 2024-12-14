@@ -1,58 +1,128 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Nav from "../../components/Nav.tsx";
 import SearchIcon from "@mui/icons-material/Search";
-import CancelIcon from "@mui/icons-material/Cancel";
 
 const QuizesPage = () => {
     const navigate = useNavigate();
+    const [quizzes, setQuizzes] = useState([]);
+    const [error, setError] = useState("");
+    const [filter, setFilter] = useState({
+        page: 0,
+        size: 10,
+        level: "",
+        status: true,
+        topics: [],
+        searchText: "",
+        authorName: "",
+        verified: true,
+    });
 
-    const users = [
-        { id: 1, user: "Akhan", title: "1. Независимый Казахстан", average: "70.6%", difficulty: "Easy", questions: 25 },
-        { id: 2, user: "Dana", title: "2. Великая Отечественная Война", average: "85.3%", difficulty: "Medium", questions: 30 },
-        { id: 3, user: "Aliya", title: "3. Реформы Абая", average: "92.1%", difficulty: "Hard", questions: 40 },
-    ];
+    const buildQueryParams = (filter) => {
+        const params = new URLSearchParams();
 
-    const getDifficultyColor = (difficulty: string) => {
+        Object.keys(filter).forEach((key) => {
+            const value = filter[key];
+            if (Array.isArray(value) && value.length > 0) {
+                params.append(key, JSON.stringify(value));
+            } else if (value !== "" && value !== null) {
+                params.append(key, value);
+            }
+        });
+
+        return params.toString();
+    };
+
+    useEffect(() => {
+        const fetchQuizzes = async () => {
+            try {
+                const token = localStorage.getItem("authToken");
+
+                const queryParams = buildQueryParams(filter);
+                const url = `http://35.244.23.124:8080/api/admin/quizzes?${queryParams}`;
+
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Accept-Language": "RU",
+                        "Accept": "*/*",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Не удалось загрузить квизы. Попробуйте позже.");
+                }
+
+                const data = await response.json();
+                setQuizzes(data.content || []);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        fetchQuizzes();
+    }, [filter]);
+
+    const getDifficultyColor = (difficulty) => {
         switch (difficulty) {
-            case "Easy":
+            case "EASY":
                 return "text-green-500";
-            case "Medium":
+            case "MEDIUM":
                 return "text-yellow-500";
-            case "Hard":
+            case "HARD":
                 return "text-red-500";
             default:
                 return "text-gray-500";
         }
     };
 
-    const handleRowClick = (id: number) => {
+    const handleRowClick = (id) => {
         navigate(`/DetailUserQuiz/${id}`);
+    };
+
+    const handleFilterChange = (key, value) => {
+        setFilter((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
     };
 
     return (
         <>
             <Nav />
             <section className="bg-bgColor text-white p-6 min-h-screen">
-                <h1 className="text-2xl font-bold mb-6">Quizes</h1>
+                <h1 className="text-2xl font-bold mb-6">Квизы</h1>
+
+                {error && <p className="text-red-500">{error}</p>}
 
                 <div className="flex justify-between items-center gap-4">
                     <div className="flex gap-4">
-                        <select className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54">
-                            <option>Topics</option>
-                            <option>Казахское ханство</option>
-                            <option>Бронзовый век</option>
-                            <option>Шелковый путь</option>
+                        <select
+                            className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54"
+                            onChange={(e) =>
+                                handleFilterChange("topics", [...filter.topics, e.target.value])}
+                        >
+                            <option value="">Темы</option>
+                            <option value="Казахское ханство">Казахское ханство</option>
+                            <option value="Бронзовый век">Бронзовый век</option>
+                            <option value="Шелковый путь">Шелковый путь</option>
                         </select>
-                        <select className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-55">
-                            <option>Difficulty</option>
-                            <option>Easy</option>
-                            <option>Medium</option>
-                            <option>Hard</option>
+                        <select
+                            className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-55"
+                            onChange={(e) => handleFilterChange("level", e.target.value)}
+                        >
+                            <option value="">Сложность</option>
+                            <option value="EASY">Легкий</option>
+                            <option value="MEDIUM">Средний</option>
+                            <option value="HARD">Сложный</option>
                         </select>
-                        <select className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54">
-                            <option>Status</option>
-                            <option>Active</option>
-                            <option>Inactive</option>
+                        <select
+                            className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54"
+                            onChange={(e) => handleFilterChange("status", e.target.value === "Active")}
+                        >
+                            <option value="Active">Активен</option>
+                            <option value="Inactive">Неактивен</option>
                         </select>
                     </div>
 
@@ -60,50 +130,36 @@ const QuizesPage = () => {
                         <SearchIcon className="text-gray-400 ml-2" />
                         <input
                             type="text"
-                            placeholder="Search"
+                            placeholder="Поиск"
                             className="bg-innerFormColor text-gray-300 p-2 rounded-lg w-full focus:outline-none"
+                            onChange={(e) => handleFilterChange("searchText", e.target.value)}
                         />
                     </div>
                 </div>
 
-                <div className="tags mt-2 text-gray-200 p-1 rounded-lg flex gap-2">
-                    <div className="rounded-lg p-2 bg-formColor w-40 flex justify-evenly hover:bg-innerFormColor">
-                        <span>Древний век</span>
-                        <a href="#">
-                            <CancelIcon />
-                        </a>
-                    </div>
-                    <div className="rounded-lg p-2 bg-formColor w-20 flex justify-evenly items-center hover:bg-innerFormColor">
-                        <span className="text-green-500">Easy</span>
-                        <a href="#">
-                            <CancelIcon />
-                        </a>
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto mt-4">
                     <table className="table-auto w-full text-left border-collapse">
                         <thead>
                         <tr className="border border-gray-300">
-                            <th className="p-4 text-gray-400">User</th>
-                            <th className="p-4 text-gray-400">Title</th>
-                            <th className="p-4 text-gray-400">Average</th>
-                            <th className="p-4 text-gray-400">Difficulty</th>
-                            <th className="p-4 text-gray-400">Questions</th>
+                            <th className="p-4 text-gray-400">Автор</th>
+                            <th className="p-4 text-gray-400">Название</th>
+                            <th className="p-4 text-gray-400">Средняя оценка</th>
+                            <th className="p-4 text-gray-400">Сложность</th>
+                            <th className="p-4 text-gray-400">Вопросы</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {users.map((user) => (
+                        {quizzes.map((quiz) => (
                             <tr
-                                key={user.id}
+                                key={quiz.id}
                                 className="hover:bg-innerFormColor cursor-pointer"
-                                onClick={() => handleRowClick(user.id)}
+                                onClick={() => handleRowClick(quiz.id)}
                             >
-                                <td className="p-4">{user.user}</td>
-                                <td className="p-4">{user.title}</td>
-                                <td className="p-4">{user.average}</td>
-                                <td className={`p-4 font-bold ${getDifficultyColor(user.difficulty)}`}>{user.difficulty}</td>
-                                <td className="p-4">{user.questions}</td>
+                                <td className="p-4">{quiz.author || "N/A"}</td>
+                                <td className="p-4">{quiz.title}</td>
+                                <td className="p-4">{quiz.average || "N/A"}</td>
+                                <td className={`p-4 font-bold ${getDifficultyColor(quiz.difficulty)}`}>{quiz.difficulty}</td>
+                                <td className="p-4">{quiz.questions || "N/A"}</td>
                             </tr>
                         ))}
                         </tbody>
