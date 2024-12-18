@@ -3,11 +3,30 @@ import { useNavigate } from "react-router-dom";
 import Nav from "../../components/Nav.tsx";
 import SearchIcon from "@mui/icons-material/Search";
 
+// Определение интерфейса для типа Quiz
+interface Quiz {
+    id: string;
+    author: string;
+    title: string;
+    average: number;
+    difficulty: string;
+    questions: string[];
+}
+
 const QuizesPage = () => {
     const navigate = useNavigate();
-    const [quizzes, setQuizzes] = useState([]);
-    const [error, setError] = useState("");
-    const [filter, setFilter] = useState({
+    const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+    const [error, setError] = useState<string>("");
+    const [filter, setFilter] = useState<{
+        page: number;
+        size: number;
+        level: string;
+        status: boolean;
+        topics: string[];
+        searchText: string;
+        authorName: string;
+        verified: boolean;
+    }>({
         page: 0,
         size: 10,
         level: "",
@@ -18,7 +37,8 @@ const QuizesPage = () => {
         verified: true,
     });
 
-    const buildQueryParams = (filter) => {
+    // Функция для сборки query-параметров
+    const buildQueryParams = (filter: Record<string, any>): string => {
         const params = new URLSearchParams();
 
         Object.keys(filter).forEach((key) => {
@@ -26,7 +46,7 @@ const QuizesPage = () => {
             if (Array.isArray(value) && value.length > 0) {
                 params.append(key, JSON.stringify(value));
             } else if (value !== "" && value !== null) {
-                params.append(key, value);
+                params.append(key, value.toString());
             }
         });
 
@@ -44,9 +64,9 @@ const QuizesPage = () => {
                 const response = await fetch(url, {
                     method: "GET",
                     headers: {
-                        "Authorization": `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                         "Accept-Language": "RU",
-                        "Accept": "*/*",
+                        Accept: "*/*",
                     },
                 });
 
@@ -57,14 +77,15 @@ const QuizesPage = () => {
                 const data = await response.json();
                 setQuizzes(data.content || []);
             } catch (err) {
-                setError(err.message);
+                const errorMessage = (err as Error).message || "Произошла ошибка";
+                setError(errorMessage);
             }
         };
 
         fetchQuizzes();
     }, [filter]);
 
-    const getDifficultyColor = (difficulty) => {
+    const getDifficultyColor = (difficulty: string): string => {
         switch (difficulty) {
             case "EASY":
                 return "text-green-500";
@@ -77,11 +98,11 @@ const QuizesPage = () => {
         }
     };
 
-    const handleRowClick = (id) => {
+    const handleRowClick = (id: string) => {
         navigate(`/DetailUserQuiz/${id}`);
     };
 
-    const handleFilterChange = (key, value) => {
+    const handleFilterChange = (key: string, value: any) => {
         setFilter((prev) => ({
             ...prev,
             [key]: value,
@@ -101,7 +122,8 @@ const QuizesPage = () => {
                         <select
                             className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54"
                             onChange={(e) =>
-                                handleFilterChange("topics", [...filter.topics, e.target.value])}
+                                handleFilterChange("topics", [...filter.topics, e.target.value])
+                            }
                         >
                             <option value="">Темы</option>
                             <option value="Казахское ханство">Казахское ханство</option>
@@ -119,7 +141,9 @@ const QuizesPage = () => {
                         </select>
                         <select
                             className="bg-innerFormColor text-gray-300 p-2 rounded-lg focus:outline-none w-54"
-                            onChange={(e) => handleFilterChange("status", e.target.value === "Active")}
+                            onChange={(e) =>
+                                handleFilterChange("status", e.target.value === "Active")
+                            }
                         >
                             <option value="Active">Активен</option>
                             <option value="Inactive">Неактивен</option>
@@ -158,8 +182,14 @@ const QuizesPage = () => {
                                 <td className="p-4">{quiz.author || "N/A"}</td>
                                 <td className="p-4">{quiz.title}</td>
                                 <td className="p-4">{quiz.average || "N/A"}</td>
-                                <td className={`p-4 font-bold ${getDifficultyColor(quiz.difficulty)}`}>{quiz.difficulty}</td>
-                                <td className="p-4">{quiz.questions || "N/A"}</td>
+                                <td
+                                    className={`p-4 font-bold ${getDifficultyColor(
+                                        quiz.difficulty
+                                    )}`}
+                                >
+                                    {quiz.difficulty}
+                                </td>
+                                <td className="p-4">{quiz.questions?.length || 0}</td>
                             </tr>
                         ))}
                         </tbody>
